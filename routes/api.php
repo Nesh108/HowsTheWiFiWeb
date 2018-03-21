@@ -17,4 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('wifispeed', "WifiSpeedsController@store");
+Route::get('/wifispeed', "WifiSpeedsController@index");
+Route::post('/wifispeed/create', "WifiSpeedsController@store");

@@ -13,14 +13,14 @@ class CreateWifiSpeedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('wifispeeds', function (Blueprint $table) {
+        Schema::create('wifi_speeds', function (Blueprint $table) {
             $table->increments('id');
-            $table->double('latitude', 12, 10); // TODO: Check again
-            $table->double('longitude', 13, 10); // TODO: Check again
-            $table->double('accuracy', 10, 4); // TODO: Check again
+            $table->double('latitude', 10, 8);
+            $table->double('longitude', 11, 8);
+            $table->double('accuracy', 6, 2);
             $table->integer('download');
             $table->integer('upload');
-            $table->double('ping', 10, 1); // TODO: Check again
+            $table->double('ping', 5, 1);
             $table->integer('packet_loss');
             $table->string('name');
             $table->text('comments');
@@ -35,6 +35,6 @@ class CreateWifiSpeedsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('wifispeeds');
+        Schema::drop('wifi_speeds');
     }
 }
