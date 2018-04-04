@@ -1,95 +1,92 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+    <h3>My Google Maps Demo</h3>
+    <div id="map"></div>
 
-        <title>Laravel</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script>
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
+      function initMap() {
+        $.ajax({
+          url: "/api/wifispeed?min_latitude=-89&max_latitude=89&min_longitude=-180&max_longitude=180",
+          cache: false,
+           type: "GET",
+           contentType: "application/json",
+           dataType: "json",
+          success: function(data) {
+            if(data.length > 0) {
+                var first_element = { lat: data[0]["latitude"], lng: data[0]["longitude"] };
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 1,
+                  center: first_element
+                });
+
+                var marker;
+                for (var i = 0; i < data.length; i++) {
+                    var contentString = '<div id="content">'+
+                    '<div id="siteNotice">'+
+                    '</div>'+
+                    '<h1 id="firstHeading" class="firstHeading">' + data[i]["name"] +'</h1>'+
+                    '<div id="bodyContent">'+
+                    '<p>' + data[i]["comments"] +'</p>'+
+                    '</div>'+
+                    '</div>';
+
+                    var infowindow = new google.maps.InfoWindow({
+                      content: contentString
+                    });
+
+                    marker = new google.maps.Marker({
+                        position: {lat: data[i]["latitude"], lng: data[i]["longitude"]},
+                        map: map,
+                        title: data[i]["name"]
+                    });
+
+                    google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+                        return function() {
+                            infowindow.setContent(content);
+                            infowindow.open(map,marker);
+                        };
+                    })(marker,content,infowindow));
+                }
             }
+          }
+        });
 
-            .full-height {
-                height: 100vh;
-            }
+      }
+    </script>
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
 
-            .position-ref {
-                position: relative;
-            }
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
 
-            .content {
-                text-align: center;
-            }
 
-            .title {
-                font-size: 84px;
-            }
 
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
 
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
 
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
-        </div>
-    </body>
+
+
+
+
+
+
+
+
+
+
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_-_fpeb4PL3N9JMzP4NJnVF_rBBG08pU&callback=initMap">
+    </script>
+  </body>
 </html>

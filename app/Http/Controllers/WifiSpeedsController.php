@@ -8,7 +8,22 @@ use App\WifiSpeeds;
 class WifiSpeedsController extends Controller
 {
     public function index(Request $request) {
-    	return WifiSpeeds::all();
+    	$validator = \Validator::make($request->all(), [
+    		'min_latitude' => 'required|numeric|min:-90|max:90',
+    		'max_latitude' => 'required|numeric|min:-90|max:90',
+    		'min_longitude' => 'required|numeric|min:-180|max:180',
+    		'max_longitude' => 'required|numeric|min:-180|max:180',
+    	]);
+
+    	if($validator->fails()) {
+    		return response()->json(["message" => "NOKIEDOKIE-GET"]);
+    	}
+
+    	return WifiSpeeds::where('latitude', ">=", $request->min_latitude)
+    	->where('latitude', "<=", $request->max_latitude)
+    	->where('longitude', ">=", $request->min_longitude)
+    	->where('longitude', "<=", $request->max_longitude)
+    	->get();
     }
 
     public function store(Request $request) {
@@ -25,7 +40,7 @@ class WifiSpeedsController extends Controller
     	]);
 
     	if($validator->fails()) {
-    		return response()->json(["message" => "NOKIEDOKIE"]);
+    		return response()->json(["message" => "NOKIEDOKIE-POST"]);
     	}
 
     	$wifiSpeed = new WifiSpeeds();
